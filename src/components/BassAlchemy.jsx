@@ -186,11 +186,16 @@ export default function BassAlchemy() {
       </main>
 
       <footer className="relative mt-8 border-t border-white/[0.10] py-6">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-center gap-4 text-[10px]"
+        <div className="max-w-7xl mx-auto px-6 md:px-10 flex flex-col items-center gap-3 text-[10px]"
           style={{ color:'#bea066' }}>
-          <div style={{ letterSpacing:'0.15em' }}>NATHANIEL SCHOOL OF MUSIC · TEACHING TOOL</div>
-          <span style={{ opacity: 0.3 }}>·</span>
-          <DonateWidget />
+          <div className="flex items-center gap-4">
+            <div style={{ letterSpacing:'0.15em' }}>NATHANIEL SCHOOL OF MUSIC · TEACHING TOOL</div>
+            <span style={{ opacity: 0.3 }}>·</span>
+            <DonateWidget />
+          </div>
+          <p className="text-center" style={{ fontSize:'9px', color:'#7a5c30', letterSpacing:'0.05em', maxWidth:'360px', lineHeight:'1.6' }}>
+            This tool is free, always. If it made harmony click for you,&nbsp;a small gift helps us keep building.
+          </p>
         </div>
       </footer>
 

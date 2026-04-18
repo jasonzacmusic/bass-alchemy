@@ -87,6 +87,7 @@ export function PayPalButton({ placement = 'up' }) {
             href={PAYPAL_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={e => { e.preventDefault(); window.open(PAYPAL_URL, '_blank'); }}
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
               padding: '10px 14px', borderRadius: '10px',

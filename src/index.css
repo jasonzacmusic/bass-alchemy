@@ -31,6 +31,11 @@
   min-height: 44px;
   min-width:  44px;
 }
+/* Header icon buttons sit inside a tall header row — natural size is fine ── */
+.ba-root header button {
+  min-height: 0;
+  min-width:  0;
+}
 
 /* ── Prevent horizontal overflow on narrow phones ── */
 .ba-root { overflow-x: hidden; }
@@ -49,6 +54,11 @@
 @keyframes fadeIn {
   0%   { opacity: 0; }
   100% { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+  0%   { opacity: 0; transform: translate(-50%, -8px); }
+  100% { opacity: 1; transform: translate(-50%, 0);    }
 }
 
 @keyframes guideRise {

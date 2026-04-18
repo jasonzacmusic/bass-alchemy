@@ -1,6 +1,7 @@
 import { DISPLAY, CATEGORY_META } from '../constants';
+import GuitarDiagram from './GuitarDiagram';
 
-export default function ChordDisplay({ voicingName, keyPc, selected, pulseKey }) {
+export default function ChordDisplay({ voicingName, keyPc, selected, pulseKey, instrument, guitarFrets }) {
   const categoryMeta = CATEGORY_META[selected.category];
   return (
     <section className="text-center mb-10 md:mb-12">
@@ -30,6 +31,18 @@ export default function ChordDisplay({ voicingName, keyPc, selected, pulseKey })
       >
         {selected.name}
       </div>
+
+      {instrument === 'guitar' && guitarFrets && (
+        <div className="mt-4 flex justify-center">
+          <div className="inline-block rounded-lg px-3 py-2"
+            style={{
+              background:'rgba(22,16,10,0.55)',
+              border:'1px solid rgba(245,184,65,0.18)',
+            }}>
+            <GuitarDiagram frets={guitarFrets} />
+          </div>
+        </div>
+      )}
 
       <div className="mt-5 inline-flex items-center gap-2 px-3 py-1 rounded-full"
         style={{

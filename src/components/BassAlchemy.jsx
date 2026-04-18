@@ -61,6 +61,8 @@ export default function BassAlchemy() {
           keyPc={s.keyPc}
           selected={s.selected}
           pulseKey={s.pulseKey}
+          instrument={s.instrument}
+          guitarFrets={s.guitarFrets}
         />
 
         {/* Piano + Transport */}
@@ -86,6 +88,8 @@ export default function BassAlchemy() {
             onBpmChange={s.setBpm}
             metronomeOn={s.metronomeOn}
             onMetronomeToggle={() => s.setMetronomeOn(m => !m)}
+            instrument={s.instrument}
+            onInstrumentChange={s.setInstrument}
           />
         </section>
 

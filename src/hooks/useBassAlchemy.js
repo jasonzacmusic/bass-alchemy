@@ -4,7 +4,8 @@ import { VOICINGS, TONE_NAMES, DISPLAY, DEMO_STEPS, CATEGORY_META } from '../con
 import { parseNote, transposeNote, normaliseOctave } from '../engine/notes';
 import { analyseChord, categoriseChord } from '../engine/chords';
 import { pickNextBass, generateMusicalSequence } from '../engine/sequences';
-import { createPianoSynth, createBassSynth, createMetroSynth, createSampler } from '../engine/audio';
+import { createPianoSynth, createBassSynth, createMetroSynth, createSampler, createGuitarSynths, createGuitarBassSynth } from '../engine/audio';
+import { chordNameToFrets, fretsToNotes } from '../engine/guitarChords';
 
 // ── Parse URL params once at module load ─────────────────────────────────
 function _parseUrl() {
@@ -52,10 +53,13 @@ export function useBassAlchemy() {
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [pulseKey, setPulseKey]         = useState(0);
   const [octaveShift, setOctaveShift]   = useState(0);
+  const [instrument, setInstrument]     = useState('piano');
 
   const pianoRef        = useRef(null);
   const bassRef         = useRef(null);
   const metroRef        = useRef(null);
+  const guitarRef       = useRef(null);
+  const guitarBassRef   = useRef(null);
   const recentRef       = useRef([]);
   const lastTimeRef     = useRef(0);
   const metroEventRef   = useRef(null);
@@ -70,6 +74,7 @@ export function useBassAlchemy() {
   const modeRef         = useRef('idle');
   const octaveShiftRef  = useRef(0);
   const audioEnabledRef = useRef(false);
+  const instrumentRef   = useRef('piano');
 
   const voicing = VOICINGS.find(v => v.id === voicingId);
 
@@ -97,6 +102,7 @@ export function useBassAlchemy() {
   const selected      = allChords[bassPc];
   const bassNote      = useMemo(() => `${TONE_NAMES[bassPc]}${2 + octaveShift}`, [bassPc, octaveShift]);
   const categoryMeta  = CATEGORY_META[selected.category];
+  const guitarFrets   = useMemo(() => chordNameToFrets(selected.name), [selected.name]);
 
   // ── Keep refs in sync so Transport callbacks see latest values ──
   useEffect(() => { bpmRef.current = bpm; }, [bpm]);
@@ -111,6 +117,7 @@ export function useBassAlchemy() {
   // audioEnabled via ref so the main-playback effect does NOT fire when audio
   // is first enabled (that would cause a double-play on the first Play click).
   useEffect(() => { audioEnabledRef.current = audioEnabled; }, [audioEnabled]);
+  useEffect(() => { instrumentRef.current = instrument; }, [instrument]);
 
   // ── Sync shareable state to URL (replaceState — no history spam) ──────────
   useEffect(() => {
@@ -172,6 +179,14 @@ export function useBassAlchemy() {
       samplerPiano = createSampler(pianoRef, synthPiano, () => disposed);
     } catch (e) { /* synth stays as primary */ }
 
+    let gSynths = null, gBass = null;
+    try {
+      gSynths = createGuitarSynths();
+      guitarRef.current = gSynths;
+      gBass = createGuitarBassSynth();
+      guitarBassRef.current = gBass;
+    } catch (e) {}
+
     return () => {
       disposed = true;
       try { Tone.Transport.stop(); Tone.Transport.cancel(); } catch (e) {}
@@ -179,6 +194,8 @@ export function useBassAlchemy() {
       try { bass.dispose(); } catch (e) {}
       try { metro.dispose(); } catch (e) {}
       try { if (samplerPiano) samplerPiano.dispose(); } catch (e) {}
+      try { if (gSynths) gSynths.forEach(s => s.dispose()); } catch (e) {}
+      try { if (gBass) gBass.dispose(); } catch (e) {}
     };
   }, []);
 
@@ -196,10 +213,6 @@ export function useBassAlchemy() {
   // time — if provided, schedules at that exact Transport time (loop/tour).
   //        If null, computes a monotonic near-future time for manual triggers.
   const playChord = useCallback((bassN, rh, pat, currentBpm, time = null) => {
-    const p = pianoRef.current;
-    const b = bassRef.current;
-    if (!p || !b) return;
-
     let t0;
     if (time !== null && time !== undefined) {
       t0 = time;
@@ -212,6 +225,46 @@ export function useBassAlchemy() {
 
     const bd = 60 / currentBpm;
     const md = bd * 4;
+
+    if (instrumentRef.current === 'guitar') {
+      const gSynths = guitarRef.current;
+      const gbSynth = guitarBassRef.current;
+      if (!gSynths || !gbSynth) return;
+      try {
+        const chordName = chordsRef.current[bassPcRef.current]?.name;
+        const frets = chordNameToFrets(chordName);
+        const gNotes = frets ? fretsToNotes(frets) : rh;
+        const strum = 0.022;
+        gbSynth.triggerAttack(bassN, t0, 0.85);
+        switch (pat) {
+          case 'arp':
+            gNotes.forEach((n, i) => {
+              gSynths[i % gSynths.length].triggerAttack(n, t0 + i * (bd / Math.max(gNotes.length, 1)), 0.72);
+            });
+            break;
+          case 'pulse':
+            for (let beat = 0; beat < 4; beat++) {
+              gNotes.forEach((n, i) => {
+                gSynths[i % gSynths.length].triggerAttack(n, t0 + beat * bd + i * strum, 0.7);
+              });
+            }
+            break;
+          default:
+            gNotes.forEach((n, i) => {
+              gSynths[i % gSynths.length].triggerAttack(n, t0 + i * strum, 0.72);
+            });
+        }
+        lastTimeRef.current = t0 + md;
+      } catch (e) {
+        lastTimeRef.current = 0;
+      }
+      setPulseKey(k => k + 1);
+      return;
+    }
+
+    const p = pianoRef.current;
+    const b = bassRef.current;
+    if (!p || !b) return;
 
     try {
       p.releaseAll();
@@ -530,12 +583,12 @@ export function useBassAlchemy() {
     // state
     keyPc, voicingId, bassPc, pattern, bpm, metronomeOn, muted,
     inDemo, demoCaption, showGuide, sequence, editSlot, loopOn, loopSlot,
-    pianoLoaded, octaveShift, autoOn, pulseKey,
+    pianoLoaded, octaveShift, autoOn, pulseKey, instrument,
     // derived
-    voicing, rhNotes, allChords, selected, bassNote, categoryMeta,
+    voicing, rhNotes, allChords, selected, bassNote, categoryMeta, guitarFrets,
     // setters
     setVoicingId, setKeyPc, setPattern, setBpm,
-    setMuted, setShowGuide, setOctaveShift, setMetronomeOn,
+    setMuted, setShowGuide, setOctaveShift, setMetronomeOn, setInstrument,
     // actions
     play, stopAll, toggleAuto, toggleLoop,
     runDemo, handleSlotClick, handleBassClick,

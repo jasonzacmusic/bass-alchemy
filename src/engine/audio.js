@@ -57,3 +57,25 @@ export function createSampler(pianoRef, synthPiano, isDisposed) {
   });
   return sampler;
 }
+
+export function createGuitarSynths(count = 6) {
+  return Array.from({ length: count }, () => {
+    const s = new Tone.PluckSynth({
+      attackNoise: 1.2,
+      dampening: 3800,
+      resonance: 0.965,
+    }).toDestination();
+    s.volume.value = -8;
+    return s;
+  });
+}
+
+export function createGuitarBassSynth() {
+  const s = new Tone.PluckSynth({
+    attackNoise: 0.8,
+    dampening: 2200,
+    resonance: 0.98,
+  }).toDestination();
+  s.volume.value = -4;
+  return s;
+}

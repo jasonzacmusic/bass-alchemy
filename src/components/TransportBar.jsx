@@ -11,6 +11,7 @@ export default function TransportBar({
   pattern, onPatternChange,
   bpm, onBpmChange,
   metronomeOn, onMetronomeToggle,
+  instrument, onInstrumentChange,
 }) {
   const activeMode = loopOn || autoOn || inDemo;
 
@@ -51,8 +52,34 @@ export default function TransportBar({
         </button>
       </div>
 
+      {/* Instrument toggle */}
+      <div className="mt-4 flex justify-center">
+        <div className="flex rounded-full overflow-hidden"
+          style={{ border:'1px solid rgba(255,255,255,0.12)' }}>
+          {['piano','guitar'].map(inst => (
+            <button key={inst}
+              onClick={() => onInstrumentChange(inst)}
+              style={{
+                padding:'3px 16px',
+                fontSize:'9px',
+                letterSpacing:'0.14em',
+                textTransform:'uppercase',
+                background: instrument === inst ? 'rgba(245,184,65,0.15)' : 'transparent',
+                color: instrument === inst ? '#fde68a' : 'rgba(190,160,102,0.5)',
+                border:'none',
+                cursor:'pointer',
+                transition:'all 150ms',
+                fontFamily:"'Inter', ui-sans-serif, sans-serif",
+              }}
+            >
+              {inst}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Legend */}
-      <div className="mt-6 flex items-center justify-center gap-6 text-xs">
+      <div className="mt-4 flex items-center justify-center gap-6 text-xs">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-sm" style={{ background:'#f5b841' }} />
           <span style={{ color:'#f3dead' }}>Right hand · <span style={{ color:'#bea066' }}>piano · fixed</span></span>

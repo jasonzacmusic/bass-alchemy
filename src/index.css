@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Text-shadow scoped to .ba-root ── */
+.ba-root p, .ba-root span, .ba-root div,
+.ba-root h1, .ba-root h2, .ba-root h3,
+.ba-root button, .ba-root a {
+  text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+}
+.ba-root svg text { text-shadow: none; }
+.ba-root option   { text-shadow: none; }
+
+/* ── Range input height ── */
+.ba-root input[type="range"] { height: 4px; }
+
+/* ── Will-change for animated chord display ── */
+.chord-display { will-change: transform, opacity, filter; }
+
+/* ── Keyframes ── */
+@keyframes chordFade {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.985); filter: blur(4px); }
+  100% { opacity: 1; transform: translateY(0)   scale(1);     filter: blur(0);   }
+}
+
+@keyframes fadeInUp {
+  0%   { opacity: 0; transform: translate(-50%, 20px); }
+  100% { opacity: 1; transform: translate(-50%, 0);    }
+}
+
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes guideRise {
+  0%   { opacity: 0; transform: translateY(28px) scale(0.985); }
+  100% { opacity: 1; transform: translateY(0)    scale(1);     }
+}
+
+@keyframes seqPulse {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(245,184,65,0.0);  }
+  50%      { box-shadow: 0 0 0 4px rgba(245,184,65,0.18); }
+}
+
+@keyframes bassBeat {
+  0%   { transform: translateY(0)    scale(1);    }
+  40%  { transform: translateY(-6px) scale(1.08); }
+  100% { transform: translateY(-2px) scale(1);    }
+}

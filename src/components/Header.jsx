@@ -1,6 +1,6 @@
-import { Sparkles, HelpCircle, Volume2, VolumeX } from 'lucide-react';
+import { Sparkles, HelpCircle, Volume2, VolumeX, Share2, Check } from 'lucide-react';
 
-export default function Header({ muted, onMuteToggle, onGuideOpen }) {
+export default function Header({ muted, onMuteToggle, onGuideOpen, onShare, shareCopied }) {
   return (
     <header className="relative border-b border-white/[0.10] backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
@@ -23,6 +23,15 @@ export default function Header({ muted, onMuteToggle, onGuideOpen }) {
             <Sparkles size={12} className="text-amber-400" />
             <span style={{ letterSpacing:'0.08em' }}>ONE VOICING · TWELVE BASSES · ANY KEY</span>
           </div>
+          <button onClick={onShare} title={shareCopied ? 'Link copied!' : 'Share this configuration'}
+            className="p-2 rounded-full transition-all hover:-translate-y-[1px]"
+            style={{
+              background: shareCopied ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.06)',
+              border: shareCopied ? '1px solid rgba(34,197,94,0.45)' : '1px solid rgba(255,255,255,0.15)',
+              color: shareCopied ? '#86efac' : '#fcf4dc',
+            }}>
+            {shareCopied ? <Check size={14} /> : <Share2 size={14} />}
+          </button>
           <button onClick={onGuideOpen} title="Student guide"
             className="p-2 rounded-full transition-all hover:-translate-y-[1px]"
             style={{

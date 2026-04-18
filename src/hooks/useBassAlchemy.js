@@ -6,20 +6,44 @@ import { analyseChord, categoriseChord } from '../engine/chords';
 import { pickNextBass, generateMusicalSequence } from '../engine/sequences';
 import { createPianoSynth, createBassSynth, createMetroSynth, createSampler } from '../engine/audio';
 
+// ── Parse URL params once at module load ─────────────────────────────────
+function _parseUrl() {
+  try {
+    const p    = new URLSearchParams(window.location.search);
+    const vids = new Set(['major','minor','dim','aug','sus2','sus4','power',
+                          'quartal','tritone','maj7shell','dom7shell']);
+    const pids = new Set(['sustain','arp','pulse','comp','ballad']);
+    const cl   = (n, a, b) => Math.max(a, Math.min(b, n));
+    return {
+      voicingId: vids.has(p.get('v')) ? p.get('v') : null,
+      keyPc:     p.has('k')   ? cl(+p.get('k')  || 0,  0, 11)  : null,
+      bassPc:    p.has('b')   ? cl(+p.get('b')  || 0,  0, 11)  : null,
+      pattern:   pids.has(p.get('p')) ? p.get('p') : null,
+      bpm:       p.has('bpm') ? cl(+p.get('bpm')|| 90, 40, 200) : null,
+      sequence:  p.has('s')
+        ? p.get('s').split(',').slice(0, 4)
+            .map(x => x === '_' ? null : cl(+x || 0, 0, 11))
+            .concat([null, null, null, null]).slice(0, 4)
+        : null,
+    };
+  } catch { return {}; }
+}
+const _URL = _parseUrl();
+
 export function useBassAlchemy() {
-  const [keyPc, setKeyPc]             = useState(0);
-  const [voicingId, setVoicingId]     = useState('quartal');
-  const [bassPc, setBassPc]           = useState(0);
-  const [pattern, setPattern]         = useState('sustain');
+  const [keyPc, setKeyPc]             = useState(_URL.keyPc    ?? 0);
+  const [voicingId, setVoicingId]     = useState(_URL.voicingId ?? 'quartal');
+  const [bassPc, setBassPc]           = useState(_URL.bassPc   ?? 0);
+  const [pattern, setPattern]         = useState(_URL.pattern  ?? 'sustain');
   const [autoOn, setAutoOn]           = useState(false);
-  const [bpm, setBpm]                 = useState(90);
+  const [bpm, setBpm]                 = useState(_URL.bpm      ?? 90);
   const [metronomeOn, setMetronomeOn] = useState(false);
   const [muted, setMuted]             = useState(false);
   const [inDemo, setInDemo]           = useState(false);
   const [demoCaption, setDemoCaption] = useState('');
   const [showGuide, setShowGuide]     = useState(false);
 
-  const [sequence, setSequence] = useState([null, null, null, null]);
+  const [sequence, setSequence] = useState(_URL.sequence ?? [null, null, null, null]);
   const [editSlot, setEditSlot] = useState(null);
   const [loopOn, setLoopOn]     = useState(false);
   const [loopSlot, setLoopSlot] = useState(0);
@@ -87,6 +111,38 @@ export function useBassAlchemy() {
   // audioEnabled via ref so the main-playback effect does NOT fire when audio
   // is first enabled (that would cause a double-play on the first Play click).
   useEffect(() => { audioEnabledRef.current = audioEnabled; }, [audioEnabled]);
+
+  // ── Sync shareable state to URL (replaceState — no history spam) ──────────
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams();
+      params.set('v', voicingId);
+      params.set('k', keyPc);
+      params.set('b', bassPc);
+      params.set('p', pattern);
+      if (bpm !== 90) params.set('bpm', bpm);
+      const seqStr = sequence.map(s => s === null ? '_' : s).join(',');
+      if (seqStr !== '_,_,_,_') params.set('s', seqStr);
+      window.history.replaceState(null, '', `?${params}`);
+    } catch (e) {}
+  }, [voicingId, keyPc, bassPc, pattern, bpm, sequence]);
+
+  // ── Share ─────────────────────────────────────────────────────────────────
+  const [shareCopied, setShareCopied] = useState(false);
+  const share = useCallback(async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Bass Alchemy', text: 'Try this chord voicing', url });
+        return;
+      }
+    } catch (e) {}
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2200);
+    } catch (e) {}
+  }, []);
 
   // ── Fonts ──
   useEffect(() => {
@@ -484,5 +540,6 @@ export function useBassAlchemy() {
     play, stopAll, toggleAuto, toggleLoop,
     runDemo, handleSlotClick, handleBassClick,
     clearSequence, fillMusicalRandom,
+    share, shareCopied,
   };
 }

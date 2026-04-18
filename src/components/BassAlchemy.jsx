@@ -8,6 +8,7 @@ import BassGrid from './BassGrid';
 import KeyMiniPiano from './KeyMiniPiano';
 import VoicingSelector from './VoicingSelector';
 import StudentGuide from './StudentGuide';
+import DonateWidget from './DonateWidget';
 
 function SectionHeading({ children, subtitle, subtitleColor = '#bea066' }) {
   return (
@@ -49,6 +50,8 @@ export default function BassAlchemy() {
         muted={s.muted}
         onMuteToggle={() => s.setMuted(m => !m)}
         onGuideOpen={() => s.setShowGuide(true)}
+        onShare={s.share}
+        shareCopied={s.shareCopied}
       />
 
       <main className="relative max-w-6xl mx-auto px-6 md:px-10 py-10 md:py-14">
@@ -183,9 +186,11 @@ export default function BassAlchemy() {
       </main>
 
       <footer className="relative mt-8 border-t border-white/[0.10] py-6">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-center text-[10px]"
+        <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-center gap-4 text-[10px]"
           style={{ color:'#bea066' }}>
           <div style={{ letterSpacing:'0.15em' }}>NATHANIEL SCHOOL OF MUSIC · TEACHING TOOL</div>
+          <span style={{ opacity: 0.3 }}>·</span>
+          <DonateWidget />
         </div>
       </footer>
 

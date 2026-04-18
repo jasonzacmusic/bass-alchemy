@@ -8,7 +8,7 @@ import BassGrid from './BassGrid';
 import KeyMiniPiano from './KeyMiniPiano';
 import VoicingSelector from './VoicingSelector';
 import StudentGuide from './StudentGuide';
-import DonateWidget from './DonateWidget';
+import SupportSection from './DonateWidget';
 
 function SectionHeading({ children, subtitle, subtitleColor = '#bea066' }) {
   return (
@@ -185,17 +185,12 @@ export default function BassAlchemy() {
         </section>
       </main>
 
-      <footer className="relative mt-8 border-t border-white/[0.10] py-6">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 flex flex-col items-center gap-3 text-[10px]"
-          style={{ color:'#bea066' }}>
-          <div className="flex items-center gap-4">
-            <div style={{ letterSpacing:'0.15em' }}>NATHANIEL SCHOOL OF MUSIC · TEACHING TOOL</div>
-            <span style={{ opacity: 0.3 }}>·</span>
-            <DonateWidget />
+      <footer className="relative mt-8 border-t border-white/[0.08] py-8">
+        <div className="max-w-3xl mx-auto px-6 md:px-10 flex flex-col items-center gap-6">
+          <SupportSection />
+          <div className="text-[9px] text-center" style={{ color:'#4a3520', letterSpacing:'0.18em' }}>
+            NATHANIEL SCHOOL OF MUSIC · TEACHING TOOL
           </div>
-          <p className="text-center" style={{ fontSize:'9px', color:'#7a5c30', letterSpacing:'0.05em', maxWidth:'360px', lineHeight:'1.6' }}>
-            This tool is free, always. If it made harmony click for you,&nbsp;a small gift helps us keep building.
-          </p>
         </div>
       </footer>
 

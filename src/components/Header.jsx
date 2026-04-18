@@ -1,5 +1,5 @@
 import { Sparkles, HelpCircle, Volume2, VolumeX, Share2, Check } from 'lucide-react';
-import { PayPalButton, UpiButton } from './DonateWidget';
+import { PayPalHeaderLink, UpiHeaderButton } from './DonateWidget';
 
 export default function Header({ muted, onMuteToggle, onGuideOpen, onShare, shareCopied }) {
   return (
@@ -28,8 +28,8 @@ export default function Header({ muted, onMuteToggle, onGuideOpen, onShare, shar
 
           {/* Support pills — hidden on very small screens (footer covers mobile) */}
           <div className="hidden sm:flex items-center gap-1.5 ml-1">
-            <PayPalButton placement="down" />
-            <UpiButton placement="down" />
+            <PayPalHeaderLink />
+            <UpiHeaderButton />
           </div>
 
           {/* Divider */}

@@ -1,12 +1,11 @@
 import { Sparkles, HelpCircle, Volume2, VolumeX } from 'lucide-react';
-import { NSM_LOGO } from '../constants';
 
 export default function Header({ muted, onMuteToggle, onGuideOpen }) {
   return (
     <header className="relative border-b border-white/[0.10] backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={NSM_LOGO} alt="Nathaniel School of Music"
+          <img src="/nsm-logo.png" alt="Nathaniel School of Music"
             className="h-10 w-10 rounded-full object-cover ring-1 ring-white/25" />
           <div className="leading-tight">
             <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color:'#ecd7a2' }}>

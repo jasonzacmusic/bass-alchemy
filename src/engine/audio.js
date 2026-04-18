@@ -45,7 +45,7 @@ export function createSampler(pianoRef, synthPiano, isDisposed) {
       'A5':'A5.mp3','C6':'C6.mp3',
     },
     release: 1.5,
-    baseUrl: 'https://tonejs.github.io/audio/salamander/',
+    baseUrl: '/samples/piano/',
     onload: () => {
       if (isDisposed()) return;
       sampler.toDestination();

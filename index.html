@@ -2,30 +2,89 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
     <title>Bass Alchemy · Nathaniel School of Music</title>
-    <meta name="description" content="Fix your right-hand shape. Move your left-hand bass. Watch the chord change. One voicing — twelve chords — any key." />
+    <meta name="description" content="Fix your right-hand shape. Move your left-hand bass. Watch the chord change. One voicing — twelve chords — any key. A free harmony tool from Nathaniel School of Music." />
+    <meta name="keywords" content="bass alchemy, piano harmony tool, music theory, chord voicing, Nathaniel School of Music, piano practice, jazz piano, chord analysis" />
+    <meta name="author" content="Nathaniel School of Music" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://bassalchemy.nathanielschool.com/" />
     <meta name="theme-color" content="#0c0a08" />
 
     <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180.png" />
 
+    <!-- PWA / Add to Home Screen -->
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Bass Alchemy" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Bass Alchemy" />
+
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nathaniel School of Music" />
+    <meta property="og:url" content="https://bassalchemy.nathanielschool.com/" />
     <meta property="og:title" content="Bass Alchemy · Nathaniel School of Music" />
-    <meta property="og:description" content="One voicing. Twelve basses. Any key. An interactive harmony tool for piano students." />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:description" content="One voicing. Twelve basses. Any key. An interactive harmony tool for piano students — free from Nathaniel School of Music." />
+    <meta property="og:image" content="https://bassalchemy.nathanielschool.com/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Bass Alchemy — Nathaniel School of Music harmony tool" />
+    <meta property="og:locale" content="en_US" />
 
-    <!-- Twitter Card -->
+    <!-- Twitter / X Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@nathanielschool" />
     <meta name="twitter:title" content="Bass Alchemy · Nathaniel School of Music" />
-    <meta name="twitter:description" content="One voicing. Twelve basses. Any key." />
-    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:description" content="One voicing. Twelve basses. Any key. Free interactive piano harmony tool." />
+    <meta name="twitter:image" content="https://bassalchemy.nathanielschool.com/og-image.png" />
+    <meta name="twitter:image:alt" content="Bass Alchemy harmony tool" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bass Alchemy",
+      "url": "https://bassalchemy.nathanielschool.com/",
+      "description": "Fix your right-hand shape. Move your left-hand bass. Watch the chord change. One voicing — twelve chords — any key.",
+      "applicationCategory": "EducationApplication",
+      "applicationSubCategory": "Music Education",
+      "operatingSystem": "Web, iOS, Android",
+      "inLanguage": "en-US",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Nathaniel School of Music",
+        "url": "https://nathanielschool.com"
+      },
+      "provider": {
+        "@type": "Organization",
+        "name": "Nathaniel School of Music",
+        "url": "https://nathanielschool.com"
+      },
+      "featureList": [
+        "Interactive piano voicing tool",
+        "12 bass note variations per voicing",
+        "11 right-hand voicings",
+        "Real-time chord analysis",
+        "4-chord progression builder",
+        "Salamander piano audio",
+        "Metronome and tempo control"
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

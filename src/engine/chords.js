@@ -26,14 +26,20 @@ export function analyseChord(bassPc, rhPcs) {
     if (uniq.length === 3) {
       for (const r of uniq) {
         const ints = new Set(uniq.map(pc => ((pc - r) % 12 + 12) % 12));
+        // Augmented excluded: symmetric chord — all three notes are equally valid
+        // roots, so slash notation creates ambiguity. Main logic names it better.
         let q = null;
         if (ints.has(0) && ints.has(4) && ints.has(7)) q = '';
         else if (ints.has(0) && ints.has(3) && ints.has(7)) q = 'm';
         else if (ints.has(0) && ints.has(3) && ints.has(6)) q = '°';
-        else if (ints.has(0) && ints.has(4) && ints.has(8)) q = '+';
         if (q !== null && r !== bassPc) {
           const bi = ((bassPc - r) % 12 + 12) % 12;
-          if (bi === 3 || bi === 4 || bi === 7) {
+          // Only allow bass notes that are actually IN the chord:
+          const validBass =
+            (q === ''  && (bi === 4 || bi === 7)) ||  // major:  3rd (1st inv) or 5th (2nd inv)
+            (q === 'm' && (bi === 3 || bi === 7)) ||  // minor:  b3 (1st inv) or 5th (2nd inv)
+            (q === '°' && (bi === 3 || bi === 6));    // dim:    b3 (1st inv) or b5 (2nd inv)
+          if (validBass) {
             return { name: `${DISPLAY[r]}${q}/${DISPLAY[bassPc]}`, family: 'safe' };
           }
         }
@@ -166,7 +172,7 @@ export function categoriseChord(info) {
   if (/13|11|9|add|6\/9/.test(core)) return 5;
   if (altCount === 1) return 5;
 
-  if (/maj7|ø|°7|7sus|7/.test(core)) return 4;
+  if (/maj7|ø|°7|7sus|7/.test(name)) return 4;  // use full name — catches e.g. "Bm(maj7)"
   if (/6/.test(core)) return 4;
 
   if (/^[A-G][♭♯]?5$/.test(core.trim())) return 3;

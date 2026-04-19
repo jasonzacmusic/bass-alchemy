@@ -61,8 +61,8 @@ export const CATEGORY_META = {
   1: { color: '#22c55e', label: 'Triad',   short: 'triad'  },
   2: { color: '#06b6d4', label: 'Sus',     short: 'sus'    },
   3: { color: '#94a3b8', label: 'Power',   short: 'power'  },
-  4: { color: '#f59e0b', label: '4-Note',  short: '4-note' },
+  4: { color: '#f59e0b', label: 'Seventh', short: '7th'    },
   5: { color: '#a855f7', label: 'Jazz',    short: 'jazz'   },
-  6: { color: '#ef4444', label: 'Rare',    short: 'rare'   },
+  6: { color: '#ef4444', label: 'Avoid',   short: 'avoid'  },
 };
 

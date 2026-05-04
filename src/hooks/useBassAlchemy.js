@@ -127,15 +127,30 @@ export function useBassAlchemy() {
   }, [instrument]);
 
   // ── Sync shareable state to URL (replaceState — no history spam) ──────────
+  // When everything is at defaults the URL stays clean ("/").
+  // Params are only added when the user has changed something worth sharing.
   useEffect(() => {
     try {
+      const seqStr = sequence.map(s => s === null ? '_' : s).join(',');
+      const isDefault =
+        voicingId === 'quartal' &&
+        keyPc     === 0 &&
+        bassPc    === 0 &&
+        pattern   === 'sustain' &&
+        bpm       === 90 &&
+        seqStr    === '_,_,_,_';
+
+      if (isDefault) {
+        window.history.replaceState(null, '', window.location.pathname);
+        return;
+      }
+
       const params = new URLSearchParams();
       params.set('v', voicingId);
       params.set('k', keyPc);
       params.set('b', bassPc);
       params.set('p', pattern);
       if (bpm !== 90) params.set('bpm', bpm);
-      const seqStr = sequence.map(s => s === null ? '_' : s).join(',');
       if (seqStr !== '_,_,_,_') params.set('s', seqStr);
       window.history.replaceState(null, '', `?${params}`);
     } catch (e) {}

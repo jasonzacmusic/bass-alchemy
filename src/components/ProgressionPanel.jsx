@@ -32,7 +32,7 @@ export default function ProgressionPanel({
                   ? '1.5px dashed rgba(245,184,65,0.75)'
                   : isPlaying
                   ? '1px solid rgba(129,140,248,0.75)'
-                  : pc !== null
+                  : pc !== null && cat
                   ? `1px solid ${cat.color}55`
                   : '1px dashed rgba(255,255,255,0.18)',
                 boxShadow: isPlaying ? '0 0 0 3px rgba(99,102,241,0.15)' : 'none',

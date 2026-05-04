@@ -58,24 +58,28 @@ export function createSampler(pianoRef, synthPiano, isDisposed) {
   return sampler;
 }
 
-export function createGuitarSynths(count = 6) {
-  return Array.from({ length: count }, () => {
-    const s = new Tone.PluckSynth({
-      attackNoise: 1.2,
-      dampening: 3800,
-      resonance: 0.965,
-    }).toDestination();
-    s.volume.value = -8;
-    return s;
-  });
+// Guitar chord synth — PolySynth so retriggering is clean (no PluckSynth
+// amplitude stacking / distortion when clicking rapidly).
+export function createGuitarSynths() {
+  const synth = new Tone.PolySynth(Tone.Synth, {
+    oscillator: { type: 'triangle8' },
+    envelope: { attack: 0.006, decay: 0.55, sustain: 0.0, release: 1.8 },
+  }).toDestination();
+  synth.volume.value = -9;
+  return synth;
 }
 
+// Guitar bass string — MonoSynth with fast-decaying envelope for plucked feel.
 export function createGuitarBassSynth() {
-  const s = new Tone.PluckSynth({
-    attackNoise: 0.8,
-    dampening: 2200,
-    resonance: 0.98,
+  const s = new Tone.MonoSynth({
+    oscillator: { type: 'triangle' },
+    envelope: { attack: 0.007, decay: 0.65, sustain: 0.0, release: 2.2 },
+    filter: { type: 'lowpass', Q: 1.8, rolloff: -12 },
+    filterEnvelope: {
+      attack: 0.005, decay: 0.35, sustain: 0.0, release: 1.5,
+      baseFrequency: 220, octaves: 2.5, exponent: 2,
+    },
   }).toDestination();
-  s.volume.value = -4;
+  s.volume.value = -3;
   return s;
 }

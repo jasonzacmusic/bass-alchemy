@@ -117,7 +117,14 @@ export function useBassAlchemy() {
   // audioEnabled via ref so the main-playback effect does NOT fire when audio
   // is first enabled (that would cause a double-play on the first Play click).
   useEffect(() => { audioEnabledRef.current = audioEnabled; }, [audioEnabled]);
-  useEffect(() => { instrumentRef.current = instrument; }, [instrument]);
+  useEffect(() => {
+    instrumentRef.current = instrument;
+    // Release any ringing guitar notes when switching away from guitar mode.
+    if (instrument !== 'guitar') {
+      try { guitarRef.current?.releaseAll(); } catch (e) {}
+      try { guitarBassRef.current?.triggerRelease(Tone.now()); } catch (e) {}
+    }
+  }, [instrument]);
 
   // ── Sync shareable state to URL (replaceState — no history spam) ──────────
   useEffect(() => {
@@ -194,7 +201,7 @@ export function useBassAlchemy() {
       try { bass.dispose(); } catch (e) {}
       try { metro.dispose(); } catch (e) {}
       try { if (samplerPiano) samplerPiano.dispose(); } catch (e) {}
-      try { if (gSynths) gSynths.forEach(s => s.dispose()); } catch (e) {}
+      try { if (gSynths) gSynths.dispose(); } catch (e) {}
       try { if (gBass) gBass.dispose(); } catch (e) {}
     };
   }, []);
@@ -227,31 +234,37 @@ export function useBassAlchemy() {
     const md = bd * 4;
 
     if (instrumentRef.current === 'guitar') {
-      const gSynths = guitarRef.current;
+      const gSynth = guitarRef.current;   // now a PolySynth
       const gbSynth = guitarBassRef.current;
-      if (!gSynths || !gbSynth) return;
+      if (!gSynth || !gbSynth) return;
       try {
+        // Release any still-ringing notes so the new strum starts clean.
+        try { gSynth.releaseAll(); } catch (e) {}
+
         const chordName = chordsRef.current[bassPcRef.current]?.name;
         const frets = chordNameToFrets(chordName);
         const gNotes = frets ? fretsToNotes(frets) : rh;
-        const strum = 0.022;
-        gbSynth.triggerAttack(bassN, t0, 0.85);
+        const strum   = 0.022;
+        const sustain = bd * 3;
+
+        gbSynth.triggerAttackRelease(bassN, bd * 3.5, t0, 0.85);
+
         switch (pat) {
           case 'arp':
             gNotes.forEach((n, i) => {
-              gSynths[i % gSynths.length].triggerAttack(n, t0 + i * (bd / Math.max(gNotes.length, 1)), 0.72);
+              gSynth.triggerAttackRelease(n, bd * 2, t0 + i * (bd / Math.max(gNotes.length, 1)), 0.72);
             });
             break;
           case 'pulse':
             for (let beat = 0; beat < 4; beat++) {
               gNotes.forEach((n, i) => {
-                gSynths[i % gSynths.length].triggerAttack(n, t0 + beat * bd + i * strum, 0.7);
+                gSynth.triggerAttackRelease(n, bd * 0.7, t0 + beat * bd + i * strum, 0.68);
               });
             }
             break;
           default:
             gNotes.forEach((n, i) => {
-              gSynths[i % gSynths.length].triggerAttack(n, t0 + i * strum, 0.72);
+              gSynth.triggerAttackRelease(n, sustain, t0 + i * strum, 0.72);
             });
         }
         lastTimeRef.current = t0 + md;
@@ -371,6 +384,14 @@ export function useBassAlchemy() {
     try {
       const b = bassRef.current;
       if (b) b.triggerRelease(Tone.now());
+    } catch (e) {}
+    try {
+      const g = guitarRef.current;
+      if (g) g.releaseAll();
+    } catch (e) {}
+    try {
+      const gb = guitarBassRef.current;
+      if (gb) gb.triggerRelease(Tone.now());
     } catch (e) {}
     lastTimeRef.current = 0;
   }, []);
